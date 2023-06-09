@@ -126,8 +126,7 @@ Method Area 와 Heap은 모든 스레드에게 공유된다.
 
 ### Heap
 
-[![image](https://github.com/9u4a/Study/assets/81855010/e47efd2c-f8d1-4a83-bd54-fa8a2dfbf5ba)
-](https://file.notion.so/f/s/33f04501-78c6-46fd-b728-8d86b340a0d7/Untitled.png?id=771171e9-6f98-46ae-a108-08c67b9fc810&table=block&spaceId=09371ed9-bf30-4aaf-8fdb-69efaba197b9&expirationTimestamp=1686384073197&signature=zLCmRPIfzJYuA3FHe9JEIAKdScdvC0YomtCanfVw_ag&downloadName=Untitled.png)
+![image](https://github.com/9u4a/Study/assets/81855010/cf6abf25-553e-41c3-b583-63cf5be4f72a)
 
 동적으로 할당되는 객체 인스턴스와 배열을 저장하는 영역(실행 중 크기 조정 가능).
 
