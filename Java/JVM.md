@@ -96,8 +96,83 @@ JVM이 시작되면 런타임 데이터 영역이 생성되고 메소드,힙 영
 ### JVM 종료
 
 일부 스레드가 Runtime 클래스의 종료, 중지 메서드나 클래스 시스템의 종료 메서드를 호출하면 JVM 종료 또는 중지 작업이 Security Managerr에 의해 허용된다.
+## Runtime Data Area
+
+![image](https://github.com/9u4a/Study/assets/81855010/e47efd2c-f8d1-4a83-bd54-fa8a2dfbf5ba)
+
+
+Runtime Data Area는 JVM이 프로그램을 수행하기 위해 OS로부터 할당 받는 메모리 영역이다.
+
+Java Stack 영역과 PC Register, Native Method Stack은 각 스레드 별로 생성이 되고,
+
+Method Area 와 Heap은 모든 스레드에게 공유된다.
+
+### Method Area
+
+모든 클래스와 인터페이스의 코드, 상수, 필드, 메소드 등의 정보를 저장하는 영역.
+
+클래스 로더에 의해 로드되며, 프로그램 실행 중에는 변경되지 않는다.
+
+동일한 클래스의 인스턴스가 여러 개 생성되어도 해당 클래스에 대한 정보는 중복 저장되지 않는다.
+
+→ 효율적인 메모리 관리
+
+**Method Area에 저장되는 정보**
+
+- **클래스 정보 :** 클래스의 전체 이름, 접근 제어자, 상위 클래스와 인터페이스, 구현하는 인터페이스 등 클래스에 대한 정보를 저장
+- **필드 정보 :** 클래스의 정적 변수와 상수 필드에 대한 정보 (필드의 이름, 타입, 접근 제어자, 초기값 등)를 저장
+- **Constant Pool :** 클래스 파일 내에서 사용되는 상수 값들의 **실제 데이터** (문자열, 정수, 부동 소수점, 클래스 및 인터페이스의 참조 등을 포함)를 저장. **Constant Pool을 통해 메소드나 필드의 실제 데이터를 참조하여 중복을 막음**
+- **메소드 정보 :** 클래스의 메소드에 대한 정보 ( 메소드의 이름, signature, 접근 제어자, 코드의 주소 등) **실제 메소드 코드는 Java Stack 영역에 저장**
+
+### Heap
+
+[![image](https://github.com/9u4a/Study/assets/81855010/e47efd2c-f8d1-4a83-bd54-fa8a2dfbf5ba)
+](https://file.notion.so/f/s/33f04501-78c6-46fd-b728-8d86b340a0d7/Untitled.png?id=771171e9-6f98-46ae-a108-08c67b9fc810&table=block&spaceId=09371ed9-bf30-4aaf-8fdb-69efaba197b9&expirationTimestamp=1686384073197&signature=zLCmRPIfzJYuA3FHe9JEIAKdScdvC0YomtCanfVw_ag&downloadName=Untitled.png)
+
+동적으로 할당되는 객체 인스턴스와 배열을 저장하는 영역(실행 중 크기 조정 가능).
+
+생성된 모든 객체는 Heap에 할당
+
+Garbage Collector (GC라 부르겠다) 에 의해 관리.
+
+**Heap에 저장되는 정보**
+
+- **객체 인스턴스 :**  프로그램에서 생성된 클래스의 객체 인스턴스 (인스턴스 변수, 메소드, 객체의 상태를 나타내는 데이터 등) new 키워드를 이용하여 동적으로 할당 → 더 이상 참조 되지 않을 때 GC가 메모리에서 제거.
+- **배열 :** 자바에서 배열은 객체로 간주하여 Heap에 할당.
+
+**Heap의 구조**
+
+- **New/Young Generation**
+    - **Eden :** 객체가 처음 생성되는 곳
+    - **From (Survivor 영역) :**  Eden 영역이 가득 차 GC가 발생한 후 살아남은 객체가 이동되는 곳.
+    - **To (Survivor 영역) :** Eden 영역이 다시 가득 차 GC가 발생한 후 From 영역에서 살아남은 객체가 이동되는 곳
+- **Old/Tenured Generation :** Young Generation에서 일정 시간 살아남은 객체들이 이동하는 곳. Young Generation보다 크기가 더 크고 객체들이 더 오래 유지된다.
+- **Metaspace :**  Java 8 이전에 존재하던 Permanent Generation의 대체 영역으로 도입. **클래스 메타데이터, 정적 변수 등 JVM 내부에서 관리해야 하는 메타 데이터를 저장한다.** Heap 외부에 할당되는 메모리 영역으로 (Native Area). 자동 크기 조정을 지원해 PermGen 에서 발생할 수 있는 메모리 부족 현상을 완화시킴.
+
+Minor GC, Major GC에 대해서는 Garbage Collector에 대하여 정리할 때 다룰 예정.
+
+### Java Stack
+
+각 스레드마다 할당되는 영역.
+
+메소드를 호출할 때마다 Stack Frame이 생성 (Local Variable, Operand Stack, Runtime Constant Pool에 대한 참조 포함) 메소드 종료 시 Stack Frame 제거
+
+**Java Stack의 특징**
+
+- 스택 기반: 스택(LIFO)의 동작 원리를 따르며 메소드 호출 시 해당 메소드의 Frame이 스택의 맨 위에 쌓이고, 메소드 종료 시 스택에서 제거 → 메소드 호출의 순서를 추적, 재귀 호출 지원
+
+### **PC Register**
+
+스레드가 시작될 때 생성되는 공간으로 스레드마다 독립적으로 존재 현재 실행 중인 스레드가 다음에 실행할 명령어의 주소를 가리키는 역할. → 독립적으로 존재하여 여러 스레드가 실행 가능함. JVM이 명령어를 순차적으로 실행할 수 있게 한다.
+
+### Native Method Stack
+
+자바 언어 이외의 언어로 작성된 네이티브 코드를 실행하는 데 사용.
+
+네이티브 메소드 호출 시 Frame 생성 호출 완료시 스택에서 제거
 
 ---
+
 Reference
 
 https://d2.naver.com/helloworld/1230
@@ -108,4 +183,16 @@ https://coding-factory.tistory.com/828
 
 https://coding-factory.tistory.com/827
 
-https://docs.oracle.com/javase/7/docs/
+https://kkang-joo.tistory.com/18
+
+https://www.samsungsds.com/kr/insights/1232761_4627.html
+
+https://inspirit941.tistory.com/294
+
+https://junghyungil.tistory.com/94?category=892275
+
+https://www.holaxprogramming.com/2013/07/20/java-jvm-gc/
+
+[https://jaemunbro.medium.com/java-metaspace에-대해-알아보자-ac363816d35e](https://jaemunbro.medium.com/java-metaspace%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-ac363816d35e)
+
+https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html
