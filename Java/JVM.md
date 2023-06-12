@@ -132,7 +132,7 @@ Method Area 와 Heap은 모든 스레드에게 공유된다.
 
 생성된 모든 객체는 Heap에 할당
 
-Garbage Collector (GC라 부르겠다) 에 의해 관리.
+Garbage Collector에 의해 관리.
 
 **Heap에 저장되는 정보**
 
@@ -148,17 +148,26 @@ Garbage Collector (GC라 부르겠다) 에 의해 관리.
 - **Old/Tenured Generation :** Young Generation에서 일정 시간 살아남은 객체들이 이동하는 곳. Young Generation보다 크기가 더 크고 객체들이 더 오래 유지된다.
 - **Metaspace :**  Java 8 이전에 존재하던 Permanent Generation의 대체 영역으로 도입. **클래스 메타데이터, 정적 변수 등 JVM 내부에서 관리해야 하는 메타 데이터를 저장한다.** Heap 외부에 할당되는 메모리 영역으로 (Native Area). 자동 크기 조정을 지원해 PermGen 에서 발생할 수 있는 메모리 부족 현상을 완화시킴.
 
-Minor GC, Major GC에 대해서는 Garbage Collector에 대하여 정리할 때 다룰 예정.
+Minor GC : New/Young Generation 에서 일어나는 GC
+
+Major GC : Old/Tenured Generation 에서 일어나는 GC
 
 ### Java Stack
 
-각 스레드마다 할당되는 영역.
+메소드 호출 시에 생성되는 지역 변수, 매개변수, 리턴 값 등을 저장하는 영역. 각 스레드가 시작될 때 생성되며 스레드마다 할당된다. Stack Frame을 저장하는 스택으로 push, pop만 수행. 메소드를 호출할 때마다 Stack Frame이 생성 메소드 종료 시 Stack Frame 제거
 
-메소드를 호출할 때마다 Stack Frame이 생성 (Local Variable, Operand Stack, Runtime Constant Pool에 대한 참조 포함) 메소드 종료 시 Stack Frame 제거
+(메소드에 필요한 메모리 = Stack Frame)
 
 **Java Stack의 특징**
 
 - 스택 기반: 스택(LIFO)의 동작 원리를 따르며 메소드 호출 시 해당 메소드의 Frame이 스택의 맨 위에 쌓이고, 메소드 종료 시 스택에서 제거 → 메소드 호출의 순서를 추적, 재귀 호출 지원
+
+**Stack Frame의 구성요소**
+
+- 지역 변수  (Local Variable) : 0부터 시작하는 인덱스를 가진 배열 메소드 내에서 선언된 지역 변수들이 저장된다. 0에는 메소드가 속한 클래스 인스턴스의 this 레퍼런스, 1부터는 메소드에 전달된 파라미터들이 저장되고, 이후에는 메소드의 지역 변수들이 저장됨.
+- 매개 변수 (Parameters) : 메소드 호출 시 전달되는 인자값들이 저장됨. 지역 변수의 일종으로 취급.
+- 피연산자 스택 (Operand Stack) : 메소드 실행 중에 계산된 값들을 저장. 산술 연산이나 메소드 호출 시 전달되는 인자값 등을 처리하는데 사용
+- Return Address : 메소드 종료 후 이전에 호출된 메소드로 돌아갈 주소를 저장.
 
 ### **PC Register**
 
@@ -169,6 +178,40 @@ Minor GC, Major GC에 대해서는 Garbage Collector에 대하여 정리할 때 
 자바 언어 이외의 언어로 작성된 네이티브 코드를 실행하는 데 사용.
 
 네이티브 메소드 호출 시 Frame 생성 호출 완료시 스택에서 제거
+
+## Execution Engine
+
+클래스 로더를 통해 JVM내의 Runtime Data Area에 배치된 바이트 코드들은 실행 엔진에 의해 실행된다. 자바 바이트 코드는 JVM 내부에서 기계가 실행할 수 있는 형태로 변경되며 두 가지 방식으로 변경된다.
+
+### 1. 인터프리터
+
+바이트 코드를 한 줄씩 읽고 해석하여 실행하는 방식. 하나하나의 해석은 빠르지만. 인터프리팅 결과의 실행은 느리다는 단점.
+
+### 2. JIT 컴파일러( Just-In-Time )
+
+인터프리터의 단점을 보완하기 위해 도입. 
+
+인터프리터 방식으로 실행하다가 바이트 코드 전체를 컴파일하여 네이티브 코드로 변경하여 직접 실행하는 방식. 네이티브 코드를 실행하는 것이 인터프리팅 보다 빠르고 캐시에 보관하기 때문에 한 번 컴파일 된 코드는 빠르게 수행된다.
+
+## Garbage Collector
+
+동적으로 할당했던 메모리 영역 중 더 이상 사용되지 않는 객체를 찾아 제거하는 역할.
+
+개발자가 명시적으로 해제할 필요 X
+
+GC를 수행하기 위한 스레드 이외의 모든 스레드의 작업이 멈추기 때문에 시스템에 큰 영향을 줄 수도 있다.  → GC튜닝을 통한 애플리케이션에 따른 최적화 필요
+
+### GC의 동작 흐름
+
+1. GC는 Reachable 객체를 식별한다 (다른 활성 객체들로부터 접근 가능한 상태를 가지는 객체)
+    
+    Reachable **:** 객체가 참조되고 있는 상태
+    
+    Unreachable **:** 객체가 참조되고 있지 않은 상태
+    
+2. **Marking** :  Reachable 객체들을 기준으로 Unreachable 객체들을 표시한다.
+3. **Sweep** : Unreachable 객체들을 Heap에서 제거하여 메모리를 회수한다.
+4. **Compact (선택적 단계)** :  객체들을 Heap의 연속적인 위치로 이동시킨다. → 메모리의 단편화를 줄임
 
 ---
 
@@ -195,3 +238,5 @@ https://www.holaxprogramming.com/2013/07/20/java-jvm-gc/
 [https://jaemunbro.medium.com/java-metaspace에-대해-알아보자-ac363816d35e](https://jaemunbro.medium.com/java-metaspace%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-ac363816d35e)
 
 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html
+
+https://rxdcxdrnine.tistory.com/23
