@@ -61,7 +61,7 @@
     - java.lang.ClassLoader의 인스턴스로 유저가 작성한 클래스를 로딩할 때 사용됨
     - 모듈 시스템 도입되면서 Application Class Loader에서 명칭 변경
 
-## 클래스 로더의 수행 과정
+## 클래스 로더의 수행 과정 (JVM 흐름)
 
 ![Untitled](https://github.com/9u4a/Study/assets/81855010/8908f102-d8d7-4820-bda5-0af21bc99a28)
 
@@ -95,7 +95,7 @@ JVM이 시작되면 런타임 데이터 영역이 생성되고 메소드,힙 영
 
 ### JVM 종료
 
-일부 스레드가 Runtime 클래스의 종료, 중지 메서드나 클래스 시스템의 종료 메서드를 호출하면 JVM 종료 또는 중지 작업이 Security Managerr에 의해 허용된다.
+일부 스레드가 Runtime 클래스의 종료, 중지 메서드나 클래스 시스템의 종료 메서드를 호출하면 JVM 종료 또는 중지 작업이 Security Manager에 의해 허용된다.
 ## Runtime Data Area
 
 ![image](https://github.com/9u4a/Study/assets/81855010/e47efd2c-f8d1-4a83-bd54-fa8a2dfbf5ba)
