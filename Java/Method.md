@@ -130,6 +130,107 @@ void method() {
 - 메소드 내에서 인스턴스 변수를 사용하지 않는다면 static을 붙이는 것을 고려한다.
     - 메소드 호출시간이 짧아지므로 성능 향상
 
+### **클래스 멤버와 인스턴스 멤버간의 참조와 호출**
+
+같은 클래스에 속한 멤버들 간에는 별도의 인스턴스를 생성하지 않고도 서로 참조 또는 호출이 가능하다. 단, 클래스 멤버가 인스턴스 멤버를 참조 또는 호출하고자 하는 경우에는 인스턴스를 생성해야 한다.
+
+→ **인스턴스 멤버가 존재하는 시점에 클래스 멤버는 항상 존재하지만, 클래스 멤버가 존재하는 시점에 인스턴스 멤버가 존재하지 않을 수도 있기 때문**
+
+```java
+class MemberClass {
+		int iv; //인스턴스 변수
+		static int cv; //클래스 변수
+		void instanceMethod() {} //인스턴스 메소드
+		static void staticMethod() {} //클래스 메소드
+		static int cv2 = iv; //클래스 변수는 인스턴스 변수를 사용할 수 없음.
+		static int cv3 = new MemberClass().iv; //인스턴스 생성해야 사용가능.
+		
+		void instanceMethod2() {
+				System.out.println(iv);
+				System.out.println(cv);
+				instanceMehtod();
+				staticMethod();
+		}
+		
+		static void staticMethod2() {
+				System.out.println(iv); //인스턴스 변수를 사용할 수 없음.
+				System.out.println(cv);
+				instanceMethod(); //인스턴스 메소드를 호출할 수 없음.
+				staticMethod();
+				MemberClass m = new MemberClass();
+				System.out.println(m.iv); //인스턴스 생성한 후 인스턴스 변수 참조가능.
+		}
+}
+```
+
+### 오버로딩
+
+한 클래스 내에 같은 이름의 메소드를 여러 개 정의하는 것을 메소드 오버로딩이라고 한다.
+
+**오버로딩의 조건**
+
+- 메소드 이름이 같아야 한다.
+- 매개변수의 개수 또는 타입이 달라야 한다.
+
+→ 서로 다른 **시그니처**를 갖는 여러 메소드를 같은 이름으로 정의하는 것.
+
+**메소드 시그니처 :** 메소드의 선언부에 명시되는 매개변수의 리스트
+
+### 오버로딩의 예
+
+가장 대표적인 예로는 println() 메소드를 들 수 있다.
+
+- println()
+- println(**boolean** x)
+- println(**char** x)
+- println(**char**[] x)
+- println(**double** x)
+- println(**float** x)
+- println(**int** x)
+- println(**long** x)
+- println(**Object** x)
+- println(**String** x)
+
+println 메소드를 호출할 때  매개변수로 넘겨주는 값의 타입에 따라서 오버로딩된 메소드들 중의 하나가 실행되는 것이다.
+
+**오버로딩의 장점**
+
+근본적으로 같은 기능을 하는 메소드들을 오버로딩하지 않고 사용한다면 서로 다른 이름을 가져야하기에 비효율적이다.
+
+→ 오버로딩을 통해 하나의 이름으로 정의될 수 있다면 더 편리.
+
+### 가변인자와 오버로딩
+
+기존에는 메소드의 매개변수 개수가 고정적이었으나 jdk1.5부터 동적으로 지정해 줄 수 있다.
+
+→ 가변인자 (varargs)
+
+```java
+//PrintStream 클래스의 printf()
+//타입... 변수명 의 형태로 선언한다.
+public PrintStream printf(String format, Object... args) {...}
+```
+
+가변인자 외에도 매개변수가 존재할 경우 가변인자를 매개변수 중에서 제일 마지막에 선언해야 한다.
+
+```java
+String varargTest(String... str) {...}
+
+System.out.println(varargTest("a"));
+System.out.println(varargTest("a","b"));
+System.out.println(varargTest(new String[]{"A","B"})); //배열도 가능
+```
+
+가변인자가 선언된 메소드를 호출할 때마다 배열이 새로 생성된다.
+
+→ 편리하지만 효율적이지 않다.
+
+매개변수의 타입을 배열로 하는 것과 가변인자는 무슨 차이가 있는가?
+
+→ 매개변수의 타입을 배열로 하면 반드시 인자를 지정해 줘야 함 (NULL이나 길이가 0인 배열)
+
+**가변인자를 선언한 메소드를 오버로딩하면 메소드를 호출했을 때 구별되지 못하는 경우가 발생할 수 있다. 가능하면 가변인자를 사용한 메소드는 오버로딩하지 않는 것이 좋다.**
+
 ---
 
 Reference
