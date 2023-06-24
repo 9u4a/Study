@@ -161,6 +161,88 @@ class Buyer {
 
 제품의 종류가 늘어날 때마다  buy메소드를 추가할 필요 없이 모든 제품이 Product 클래스를 상속 받는 점을 이용해 다음과 같이 사용할 수 있다.
 
+### 추상 클래스 (abstract class)
+
+하나 이상의 추상 메소드를 포함하는 클래스를 추상 클래스라고 한다.
+
+추상클래스로 인스턴스 생성 불가
+
+상속을 통해 자손 클래스를 만들고. 추상 클래스의 모든 추상 메소드를 오버라이딩해야 자손 클래스의 인스턴스를 생성 가능.
+
+```java
+abstract class 클래스이름 {
+	...
+}
+```
+
+### **추상 메소드 (abstract method)**
+
+선언부만 작성하고 구현부는 작성하지 않은 것을 추상 메소드라고 한다.
+
+추상 메소드를 사용하는 이유는 상속받는 자손 클래스에서 추상 메소드를 구현하도록 하기 위함이다. 
+
+```java
+abstract 반환타입 메소드이름();
+```
+
+### 추상 클래스의 작성
+
+여러 클래스에 공통적으로 사용될 수 있는 클래스를 바로 작성하기도 하고, 기존의 클래스의 공통적인 부분을 뽑아서 추상 클래스로 만들어 상속하도록 하는 경우도 있다.
+
+**추상화 :** 클래스간의 공통점을 찾아내서 공통의 조상을 만드는 작업
+
+**구체화 :** 상속을 통해 클래스를 구현, 확장하는 작업
+
+기존의 클래스에서 공통된 부분을 뽑아내어 추상 클래스로 만들기
+
+```java
+class Marine {
+	int x, y;
+	void move(int x, int y){...}
+	void stop(){...}
+	void stimPack(){...}
+}
+
+class Tank {
+	int x, y;
+	void move(int x, int y){...}
+	void stop(){...}
+	void changeMode(){...}
+}
+
+class Dropship {
+	int x, y;
+	void move(int x, int y){...}
+	void stop(){...}
+	void load(){...}
+	void unload(){...}
+}
+
+//추상클래스를 사용
+
+abstract class Unit {
+	int x, y;
+	abstract void move(int x, int y);
+	void stop() {...}
+}
+
+class Marine extends Unit {
+	void move(int x, int y) {...}
+	void stimPack() {...}
+}
+
+class Tank extends Unit {
+	void move(int x, int y) {...}
+	void changeMode() {...}
+}
+
+class Dropship extends Unit {
+	void move(int x, int y) {...}
+	void load(){...}
+	void unload(){...}
+}
+```
+
 ---
 
 Reference
