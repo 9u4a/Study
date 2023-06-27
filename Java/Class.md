@@ -311,6 +311,72 @@ class InitTest {
 6. 인스턴스 초기화 블럭 수행으로 iv에 2 저장
 7. 생성자가 수행되어 iv에 3 저장
 
+### 내부 클래스 (inner class)
+
+클래스 내에 선언된 클래스로 클래스에 다른 클래스를 선언하는 이유는 두 클래스가 서로 긴밀한 관계에 있기 때문이다.
+
+**내부 클래스의 장점**
+
+- 내부 클래스에서 외부 클래스의 멤버들을 쉽게 접근할 수 있다.
+- 코드의 복잡성을 줄일 수 있다.
+
+### **내부 클래스의 종류**
+
+내부 클래스의 종류는 변수의 선언위치에 따른 종류와 같다.
+
+| 내부 클래스 | 특징 |
+| --- | --- |
+| 인스턴스 클래스 | 외부 클래스의 멤버변수 선언위치에 선언. 인스턴스 멤버처럼 다루어진다. |
+| 스태틱 클래스 | 외부 클래스의 멤버변수 선언위치에 선언. static 멤버처럼 다루어진다. |
+| 지역 클래스 | 외부 클래스의 메소드나 초기화블록 안에 선언. 선언된 영역 내부에서만 사용가능 |
+| 익명 클래스 | 클래스의 선언과 객체의 생성을 동시에 하는 일회용 클래스 |
+
+### 내부 클래스의 선언
+
+선언위치에 따라 변수의 선언과 같은 scope와 접근성을 갖는다.
+
+```java
+class Outer {
+	class InstanceInner {}
+	static class StaticInner {}
+	
+	void outerMethod() {
+		class LocalInner {}
+	}
+}
+```
+
+### 익명 클래스(annoymouus class)
+
+클래스의 선언과 객체의 생성을 동시에 하기 때문에 단 한번만 사용될 수 있고 오직 하나의 객체만을 생성할 수 있는 일회용 클래스이다.
+
+```java
+new 조상클래스이름() {
+	//멤버 선언
+}
+
+new 구현인터페이스이름() {
+	//멤버 선언
+}
+```
+
+이름이 없기 때문에 생성자도 가질 수 없으며, 오로지 단 하나의 클래스를 상속받거나 단 하나의 인터페이스만을 구현할 수 있다.
+
+```java
+class InnerTest {
+	public static void main(String[] args) {
+		Button b = new Button("Start");
+
+		b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("ActionEvnet");
+			}
+		}
+
+	}
+}
+```
+
 ---
 
 Reference
